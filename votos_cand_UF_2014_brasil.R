@@ -76,3 +76,26 @@ write.table(dados, file="votos_2014.txt",
             row.names = F,
             col.names = T)
 print ("cabô")
+
+##dando o merge com o banco de candidaturas##
+
+#pegando o banco com as candidaturas e receita
+cand_2010_2014 <- read.csv("C:/Users/7197517.FFLCH/Desktop/cand_2010_2014.csv", sep=";", stringsAsFactors=FALSE)
+
+#juntando os dois pelo sequencial
+dados_completos <- merge(dados, cand_2010_2014, by = "SEQUENCIAL_CANDIDATO", all.x=F, all.y=T)
+
+#vendo como que ficou - yes, temos 7139!
+summary(dados_completos)
+
+#jogando fora a info repetida
+dados_completos$SIGLA_UF <- NULL
+
+#salvando o dataframe final
+write.table(dados, file="dadoscompletos.txt", 
+            sep = ";",
+            quote = T,
+            dec = ",",
+            row.names = F,
+            col.names = T)
+print ("cabô")
