@@ -1,4 +1,4 @@
-##incluindo as informações de votação no banco de candidaturas e financiamento
+##incluindo as informaÃ§Ãµes de votaÃ§Ã£o no banco de candidaturas e financiamento
 
 #definindo o diretorio
 setwd("C:/Users/Marina/Desktop/")
@@ -6,36 +6,61 @@ setwd("C:/Users/Marina/Desktop/")
 lista.arquivos <-list.files(file.path(getwd(),"/Votos 2014"))
 #pegando somente os documentos somente das receitas
 lista.arquivos <- grep(pattern="votacao_candidato_munzona_2014_", lista.arquivos, value=TRUE)
-#excluindo o arquivo BR
-lista.arquivos <- lista.arquivos[c(1:27)]
+lista.arquivos <- lista.arquivos[c(1:4)] #teste do script antes de rodar os 27 Estados.
+
 #criando um unico dataframe para todos os Estados
 dados <- data.frame()
+#Loop para coletar os dados que queremos:
+#vai abrir cada uma das listas, renomear as colunas, pegar sÃ³ os casos de Deputado Federal, fazer a soma de votos de candidatos por UF
+#dar nome as colunas resultantes
+#incluir no banco com os outros
 for(arquivo in lista.arquivos){
   print (arquivo)
-  d <- read.table(file.path(getwd(),"/Votos 2014", arquivo), sep=";", header=FALSE, fileEncoding = "latin2", stringsAsFactors = F)
-  dados <-rbind(dados, d)
+  teste <- read.table(file.path(getwd(),"/Votos 2014", arquivo), sep=";", header=FALSE, fileEncoding = "latin2", stringsAsFactors = F)
+  names(teste) <- c("DATA_GERACAO",
+                    "HORA_GERACAO",
+                    "ANO_ELEICAO", 
+                    "NUM_TURNO",
+                    "DESCRICAO_ELEICAO",
+                    "SIGLA_UF",
+                    "SIGLA_UE",
+                    "CODIGO_MUNICIPIO",
+                    "NOME_MUNICIPIO",
+                    "NUMERO_ZONA",
+                    "CODIGO_CARGO",
+                    "NUMERO_CAND", 
+                    "SEQUENCIAL_CANDIDATO",
+                    "NOME_CANDIDATO",
+                    "NOME_URNA_CANDIDATO",
+                    "DESCRICAO_CARGO",
+                    "COD_SIT_CAND_SUPERIOR",
+                    "DESC_SIT_CAND_SUPERIOR",
+                    "CODIGO_SIT_CANDIDATO",
+                    "DESC_SIT_CANDIDATO",
+                    "CODIGO_SIT_CAND_TOT",
+                    "DESC_SIT_CAND_TOT",
+                    "NUMERO_PARTIDO",
+                    "SIGLA_PARTIDO",
+                    "NOME_PARTIDO",
+                    "SEQUENCIAL_LEGENDA",
+                    "NOME_COLIGACAO",
+                    "COMPOSICAO_LEGENDA",
+                    "TOTAL_VOTOS",
+                    "TRANSITO")
+teste <- subset (teste, DESCRICAO_CARGO=="DEPUTADO FEDERAL")
+teste <- aggregate(teste$TOTAL_VOTOS, by = list(teste$SEQUENCIAL_CANDIDATO, teste$SIGLA_UF), FUN="sum")
+names(teste) <- c("SEQUENCIAL_CANDIDATO", "SIGLA_UF", "TOTAL_VOTOS")
+dados <-rbind(dados, teste)
 }
-print("cabô")
+print("cabÃ´")
 
 #salvando os arquivos
-write.table(dados, file="votos_2014.txt")
-print ("cabô")
+write.table(dados, file="votos_2014.txt", 
+            sep = ";",
+            quote = T,
+            dec = ",",
+            row.names = F,
+            col.names = T)
+print ("cabÃ´")
 
-
-#checando como os dados ficaram por variavel
-str(dados)
-
-#como os valores vieram em chr, vamos substituir as virgulas por pontos e deixar o resto em numerico:
-dados$Valor.receita <- sub(",", ".", dados$Valor.receita)
-dados$Valor.receita <- as.numeric(dados$Valor.receita)
-#checando se todos os valores estao como numericos:
-plot(density(dados$Valor.receita))  
-#checando se existe missing:
-length(dados$Valor.receita[is.na(dados$Valor.receita)])
-#agregando as receitas pelo CPF dos candidatos e pelo tipo de receita recebida
-receitas <- aggregate(dados$Valor.receita, by = list(dados$CPF.do.candidato, dados$Tipo.receita), FUN="sum")
-#renomeando as variaveis
-names(receitas) <- c("cpf", "tipo_receita", "valor")
-#deixando observacoes unicas pra cada candidato por CPF
-receitas <- reshape(receitas, timevar = "tipo_receita", idvar = "cpf", direction = "wide")
 
