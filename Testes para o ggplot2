@@ -1,0 +1,34 @@
+reg <- lm(rec_part.log ~ rec_ext.log)
+summary(reg)
+require(ggplot2)
+
+##links úteis##
+
+#http://docs.ggplot2.org/current/  #guia básico do ggplot2
+#http://colorbrewer2.org/  #para escolha de paletas
+#http://www.sthda.com/english/wiki/ggplot2-colors-how-to-change-colors-automatically-and-manually #guia geral para mudar cores
+#http://stackoverflow.com/questions/6736378/how-do-i-change-the-background-color-of-a-plot-made-with-ggplot2
+
+
+# Install
+install.packages("wesanderson")
+# Load
+library(wesanderson)
+
+##scatter plot
+#alpha: define a transparência dos pontos
+#size: define o tamanho dos pontos
+#colour e shape podem ser diferenciados por uma variável factor. Dá pra mudar manualmente como mudam
+
+q <- qplot(rec_part.log, rec_ext.log,  size = I(1.5), alpha = I(0.7), colour = factor(sexo), shape = factor (eleito2014), na.rm=TRUE) 
+
+#mudando cores e elementos gráficos
+#nota: os parâmetros definidos seguem a ordem dos factors. Tem que saber como que está pra definir a cor e formato certo pra cada coisa.
+#usar "scale_colour_brewer(palette="NOMEDOSET") se quiser usar um conjunto de cores prontas
+
+q <- q +  scale_color_manual(values=c("#fc8d59", "#99d594")) +  scale_shape_manual(values=c(19, 4))
+
+#o theme_bw() é um tema pronto que deixa o painel de fundo branco, as linhas do eixo cinza e o contorno preto.
+q <- q + theme_bw()
+
+plot(q)
