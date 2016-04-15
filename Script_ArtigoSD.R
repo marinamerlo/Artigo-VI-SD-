@@ -17,7 +17,7 @@ dados$v7 <- dados$valor.Recursos.de.pessoas.jurÃ.dicas
 dados$v8 <- dados$valor.Recursos.prÃ³prios
 dados$v9 <- dados$valor.Rendimentos.de.aplicaÃ.Å.es.financeiras
 
-#fazendo as variáveis
+#fazendo as variáveis de financiamento
 
 dados$rec_part <- (dados$v4 + dados$v5)
 dados$rec_prop <- dados$v8
