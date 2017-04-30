@@ -1,4 +1,4 @@
-###Análises descritivas###
+###Análises descritivas### 
 
 #entre ter sido eleito ou não em 2010 e ter recebido ou não recursos do partido
 cand2010n <- as.numeric(cand2010)
